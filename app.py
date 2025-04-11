@@ -15,16 +15,27 @@ responses = {
 
 @app.route('/')
 def home():
+    print("Home route accessed")
     return render_template('index.html')
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    user_message = request.json.get('message', '').lower()
-    
-    # Simple response logic
-    response = responses.get(user_message, responses['default'])
-    
-    return jsonify({'response': response})
+    print("Chat endpoint accessed")
+    try:
+        data = request.get_json()
+        print("Received data:", data)
+        user_message = data.get('message', '').lower()
+        print("User message:", user_message)
+        
+        # Simple response logic
+        response = responses.get(user_message, responses['default'])
+        print("Sending response:", response)
+        
+        return jsonify({'response': response})
+    except Exception as e:
+        print("Error in chat endpoint:", str(e))
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
+    print("Starting Flask server...")
     app.run(debug=True) 
